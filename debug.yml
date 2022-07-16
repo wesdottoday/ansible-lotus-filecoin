@@ -1,0 +1,5 @@
+- hosts: lotus
+  become: yes
+  roles:
+    - role: debug
+      tags: ['debug']

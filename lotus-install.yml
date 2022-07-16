@@ -1,0 +1,14 @@
+- hosts: lotus
+  become: yes
+  vars_prompt:
+    - name: 'lotus_mainnet'
+      prompt: 'Would you like to connect to mainnet? (Yes/[No])'
+      default: 'No'
+      private: no
+  roles:
+    - role: lotus-requirements
+      tags: ['lotus', 'requirements']
+    - role: lotus-install-devnet
+      tags: ['lotus', 'devnet']
+      when:
+        - lotus_mainnet == 'No'

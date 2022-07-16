@@ -1,0 +1,40 @@
+---
+
+- name: Bash directory
+  file:
+    path: /etc/bash_completion.d
+    state: directory
+    recurse: yes
+  when: ansible_user_shell == "/bin/bash"
+
+- name: Bash
+  shell: ~/.cargo/bin/rustup completions bash > /etc/bash_completion.d/rustup.bash-completion
+  args:
+    creates: /etc/bash_completion.d/rustup.bash-completion
+  when: ansible_user_shell == "/bin/bash"
+
+- name: Fish directory
+  file:
+    path: ~/.config/fish/completions
+    state: directory
+    recurse: yes
+  when: ansible_user_shell == "/bin/fish"
+
+- name: Fish
+  shell: ~/.cargo/bin/rustup completions fish > ~/.config/fish/completions/rustup.fish
+  args:
+    creates: ~/.config/fish/completions/rustup.fish
+  when: ansible_user_shell == "/bin/fish"
+
+- name: Zsh directory
+  file:
+    path: ~/.zfunc
+    state: directory
+    recurse: yes
+  when: ansible_user_shell == "/bin/zsh"
+
+- name: Zsh
+  shell: ~/.cargo/bin/rustup completions zsh > ~/.zfunc/_rustup
+  args:
+    creates: ~/.zfunc/_rustup
+  when: ansible_user_shell == "/bin/zsh"

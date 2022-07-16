@@ -1,0 +1,49 @@
+- name: 'Ubuntu - Lotus Pre-Requisites'
+  block:
+    - name: 'Install Lotus Pre-Requisites'
+      apt:
+        update_cache: yes
+        name:
+          - mesa-opencl-icd
+          - ocl-icd-opencl-dev
+          - gcc
+          - git
+          - bzr
+          - jq
+          - pkg-config
+          - curl
+          - clang
+          - build-essential
+          - hwloc
+          - libhwloc-dev
+          - wget
+    - name: 'Install Rust by RustUp'
+      shell: curl https://sh.rustup.rs -sSf | sh -s -- -y
+    - name: 'Fix Rust Shell Autocomplete'  
+      include_tasks: 'autocomplete.yml'
+    - name: 'Download Go'
+      get_url:
+        url: "https://go.dev/dl/go1.18.4.linux-amd64.tar.gz"
+        dest: "/tmp/"
+    - name: unarchive Go
+      become: yes
+      unarchive:
+        src: "/tmp/go1.18.4.linux-amd64.tar.gz"
+        dest: /usr/local
+        remote_src: yes
+    - name: add Go binary to PATH
+      become: yes
+      copy:
+        dest: /etc/profile.d/lotus-ansible.sh
+        content: export PATH=$PATH:/usr/local/go/bin
+    - name: load new PATH
+      shell: source /etc/profile.d/lotus-ansible.sh
+      args:
+        executable: /bin/bash
+    - name: Create Go symbolic link
+      become: yes
+      file:
+        src: "/usr/local/go/bin/go"
+        dest: "/usr/local/bin/go"
+        state: link
+  when: ansible_distribution == 'Ubuntu'

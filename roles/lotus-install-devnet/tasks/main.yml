@@ -1,0 +1,22 @@
+- name: 'Ubuntu - Lotus Install'
+  block:
+    - name: 'Clone Lotus Repo'
+      git:
+        repo: https://github.com/filecoin-project/lotus.git
+        dest: /tmp/lotus
+        clone: yes
+        update: yes
+    - name: 'Switch to Releases branch'
+      shell: git checkout releases
+      args:
+        chdir: /tmp/lotus
+    - name: 'Make clean to Join devnet'
+      shell: make clean calibnet
+      args:
+        chdir: /tmp/lotus
+    - name: 'Make install to Join devnet'
+      community.general.make:
+        chdir: /tmp/lotus
+        target: install
+      become: yes
+  when: ansible_distribution == 'Ubuntu'
